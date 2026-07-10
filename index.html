@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Schedule Your Interview | One Child</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="card">
+    <header class="card-header">
+      <img src="logo.png" alt="One Child logo" class="logo" />
+      <p class="subtitle">Schedule Your Interview</p>
+    </header>
+
+    <form id="interview-form" novalidate>
+      <div class="field">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" placeholder="Jane Doe" required />
+      </div>
+
+      <div class="field">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="jane@example.com" required />
+      </div>
+
+      <div class="field">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" required />
+      </div>
+
+      <div class="field">
+        <label>Choose a Date</label>
+        <p id="calendar-loading" class="muted-text">Loading availability...</p>
+        <div class="calendar" id="calendar" hidden>
+          <div class="calendar-header">
+            <button type="button" id="cal-prev" class="cal-nav" aria-label="Previous month">&#8249;</button>
+            <span id="cal-month-label"></span>
+            <button type="button" id="cal-next" class="cal-nav" aria-label="Next month">&#8250;</button>
+          </div>
+          <div class="calendar-weekdays">
+            <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+          </div>
+          <div class="calendar-grid" id="calendar-grid"></div>
+        </div>
+      </div>
+
+      <div class="field" id="time-field" hidden>
+        <label>Choose a Time</label>
+        <div class="time-picker" id="time-picker"></div>
+      </div>
+
+      <input type="hidden" id="timeSlot" name="timeSlot" required />
+
+      <div id="error-message" class="error-message" hidden></div>
+
+      <button type="submit" id="submit-btn">Schedule Interview</button>
+    </form>
+
+    <div id="confirmation" class="confirmation" hidden>
+      <div class="confirmation-icon">&#10003;</div>
+      <h2>You're all set!</h2>
+      <p>Thanks for scheduling with One Child. We've received your request for
+        <strong id="confirmed-slot"></strong> and will be in touch soon to confirm.</p>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
