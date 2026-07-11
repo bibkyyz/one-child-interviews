@@ -1,21 +1,21 @@
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynJbAbOoHOIcB4lYlb5gdHvGOe-hXnMNOMYrKy9fh9mv-5K7-nZYx9GiaBYkq8_yWFRg/exec";
 
 const availability = [
-  { date: "2026-07-13", times: ["10:00 AM", "2:00 PM"] },
-  { date: "2026-07-14", times: ["10:00 AM", "2:00 PM"] },
-  { date: "2026-07-15", times: ["10:00 AM", "2:00 PM"] },
-  { date: "2026-07-16", times: ["10:00 AM", "2:00 PM"] },
-  { date: "2026-07-17", times: ["10:00 AM", "2:00 PM"] },
-  { date: "2026-07-20", times: ["10:00 AM", "2:00 PM"] },
-  { date: "2026-07-21", times: ["10:00 AM", "2:00 PM"] },
-  { date: "2026-07-22", times: ["10:00 AM", "2:00 PM"] },
-  { date: "2026-07-23", times: ["10:00 AM", "2:00 PM"] },
-  { date: "2026-07-24", times: ["10:00 AM", "2:00 PM"] },
-  { date: "2026-07-27", times: ["10:00 AM", "2:00 PM"] },
-  { date: "2026-07-28", times: ["10:00 AM", "2:00 PM"] },
-  { date: "2026-07-29", times: ["10:00 AM", "2:00 PM"] },
-  { date: "2026-07-30", times: ["10:00 AM", "2:00 PM"] },
-  { date: "2026-07-31", times: ["10:00 AM", "2:00 PM"] },
+  { date: "2026-07-13", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
+  { date: "2026-07-14", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
+  { date: "2026-07-15", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
+  { date: "2026-07-16", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
+  { date: "2026-07-17", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
+  { date: "2026-07-20", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
+  { date: "2026-07-21", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
+  { date: "2026-07-22", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
+  { date: "2026-07-23", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
+  { date: "2026-07-24", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
+  { date: "2026-07-27", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
+  { date: "2026-07-28", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
+  { date: "2026-07-29", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
+  { date: "2026-07-30", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
+  { date: "2026-07-31", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
 ];
 
 const availabilityMap = new Map(availability.map((entry) => [entry.date, entry.times]));
