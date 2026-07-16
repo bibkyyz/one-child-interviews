@@ -1,5 +1,20 @@
 // Paste this whole file into Extensions > Apps Script for the "One Child Interviews" sheet.
 
+// Bookings allowed per slot, keyed by the date label exactly as it appears in
+// the "<date label> at <time>" timeSlot string. Must stay in sync with the
+// `capacity` field per date in the `availability` array in script.js.
+var DATE_CAPACITY = {
+  "Monday, July 27, 2026": 1,
+  "Tuesday, July 28, 2026": 1,
+  "Thursday, July 30, 2026": 5,
+};
+var DEFAULT_CAPACITY = 1;
+
+function getCapacityForSlot(timeSlot) {
+  var dateLabel = String(timeSlot).split(" at ")[0];
+  return DATE_CAPACITY.hasOwnProperty(dateLabel) ? DATE_CAPACITY[dateLabel] : DEFAULT_CAPACITY;
+}
+
 function doGet(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
   var bookedSlots = getBookedSlots(sheet);
@@ -23,7 +38,12 @@ function doPost(e) {
     var data = JSON.parse(e.postData.contents);
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
 
-    if (getBookedSlots(sheet).indexOf(data.timeSlot) !== -1) {
+    var existingCount = getBookedSlots(sheet).filter(function (slot) {
+      return slot === data.timeSlot;
+    }).length;
+    var capacity = getCapacityForSlot(data.timeSlot);
+
+    if (existingCount >= capacity) {
       return ContentService
         .createTextOutput(JSON.stringify({
           status: "error",

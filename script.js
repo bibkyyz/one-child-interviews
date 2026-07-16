@@ -1,24 +1,24 @@
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynJbAbOoHOIcB4lYlb5gdHvGOe-hXnMNOMYrKy9fh9mv-5K7-nZYx9GiaBYkq8_yWFRg/exec";
 
-const availability = [
-  { date: "2026-07-13", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
-  { date: "2026-07-14", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
-  { date: "2026-07-15", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
-  { date: "2026-07-16", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
-  { date: "2026-07-17", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
-  { date: "2026-07-20", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
-  { date: "2026-07-21", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
-  { date: "2026-07-22", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
-  { date: "2026-07-23", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
-  { date: "2026-07-24", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
-  { date: "2026-07-27", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
-  { date: "2026-07-28", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
-  { date: "2026-07-29", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
-  { date: "2026-07-30", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
-  { date: "2026-07-31", times: ["10:00 AM", "2:00 PM", "3:00 PM"] },
+const STANDARD_SLOT_TIMES = [
+  "9:00 AM - 9:20 AM",
+  "9:20 AM - 9:40 AM",
+  "9:40 AM - 10:00 AM",
+  "10:00 AM - 10:20 AM",
+  "10:20 AM - 10:40 AM",
+  "10:40 AM - 11:00 AM",
+  "11:00 AM - 11:20 AM",
+  "11:20 AM - 11:40 AM",
+  "11:40 AM - 12:00 PM",
 ];
 
-const availabilityMap = new Map(availability.map((entry) => [entry.date, entry.times]));
+const availability = [
+  { date: "2026-07-27", times: STANDARD_SLOT_TIMES, capacity: 1 },
+  { date: "2026-07-28", times: STANDARD_SLOT_TIMES, capacity: 1 },
+  { date: "2026-07-30", times: STANDARD_SLOT_TIMES, capacity: 5 },
+];
+
+const availabilityMap = new Map(availability.map((entry) => [entry.date, entry]));
 
 const form = document.getElementById("interview-form");
 const submitBtn = document.getElementById("submit-btn");
@@ -35,7 +35,7 @@ const timeField = document.getElementById("time-field");
 const timePicker = document.getElementById("time-picker");
 const timeSlotInput = document.getElementById("timeSlot");
 
-let bookedSlots = new Set();
+let bookedCounts = new Map();
 let selectedDateISO = null;
 let currentMonth = parseISODate(availability[0].date);
 currentMonth.setDate(1);
@@ -121,17 +121,20 @@ function selectDate(iso, dateObj) {
 }
 
 function renderTimeSlots(iso, dateObj) {
-  const times = availabilityMap.get(iso) || [];
+  const entry = availabilityMap.get(iso);
+  const times = entry ? entry.times : [];
+  const capacity = entry ? entry.capacity : 1;
   const dateLabel = formatDateLabel(dateObj);
   timePicker.innerHTML = "";
 
   times.forEach((time) => {
     const slotLabel = `${dateLabel} at ${time}`;
+    const bookedCount = bookedCounts.get(slotLabel) || 0;
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "picker-btn";
 
-    if (bookedSlots.has(slotLabel)) {
+    if (bookedCount >= capacity) {
       btn.classList.add("booked");
       btn.disabled = true;
       btn.textContent = `${time} (Booked)`;
@@ -156,10 +159,13 @@ async function loadBookedSlots() {
   try {
     const res = await fetch(SCRIPT_URL);
     const data = await res.json();
-    bookedSlots = new Set(data.bookedSlots || []);
+    bookedCounts = new Map();
+    (data.bookedSlots || []).forEach((slotLabel) => {
+      bookedCounts.set(slotLabel, (bookedCounts.get(slotLabel) || 0) + 1);
+    });
   } catch (err) {
     console.warn("Could not load booked slots; showing all as available.", err);
-    bookedSlots = new Set();
+    bookedCounts = new Map();
   }
 }
 
