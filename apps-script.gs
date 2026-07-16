@@ -60,6 +60,8 @@ function doPost(e) {
       new Date(),
     ]);
 
+    sortSheetByInterviewTime(sheet);
+
     return ContentService
       .createTextOutput(JSON.stringify({ status: "success" }))
       .setMimeType(ContentService.MimeType.JSON);
@@ -79,4 +81,38 @@ function getBookedSlots(sheet) {
   // Column D = Time Slot
   var values = sheet.getRange(2, 4, lastRow - 1, 1).getValues();
   return values.map(function (row) { return row[0]; }).filter(String);
+}
+
+// Sorts data rows (everything below the header) by interview date/time,
+// derived from the "<date label> at <start time> - <end time>" timeSlot
+// string in column D. Reorders whole rows in place so every other column
+// stays aligned with its row - this only changes display order and has no
+// effect on the exact-string booking counts used by the capacity checks.
+function sortSheetByInterviewTime(sheet) {
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 3) return; // fewer than 2 data rows - nothing to reorder
+
+  var numCols = sheet.getLastColumn();
+  var range = sheet.getRange(2, 1, lastRow - 1, numCols);
+  var values = range.getValues();
+
+  values.sort(function (a, b) {
+    return getSlotSortKey(a[3]) - getSlotSortKey(b[3]);
+  });
+
+  range.setValues(values);
+}
+
+function getSlotSortKey(timeSlot) {
+  var parts = String(timeSlot).split(" at ");
+  var dateLabel = parts[0] || "";
+  var startTime = (parts[1] || "").split(" - ")[0];
+
+  // Strip the leading weekday name (e.g. "Monday, ") so Date parsing is reliable.
+  var dateOnly = dateLabel.replace(/^[A-Za-z]+,\s*/, "");
+  var parsed = new Date(dateOnly + " " + startTime);
+
+  // Unparseable slots sort last instead of throwing, so one bad row can't
+  // break sorting for everyone else.
+  return isNaN(parsed.getTime()) ? Infinity : parsed.getTime();
 }
