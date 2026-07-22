@@ -13,9 +13,9 @@ const STANDARD_SLOT_TIMES = [
 ];
 
 const availability = [
-  { date: "2026-07-27", times: STANDARD_SLOT_TIMES, capacity: 1 },
   { date: "2026-07-28", times: STANDARD_SLOT_TIMES, capacity: 1 },
-  { date: "2026-07-30", times: STANDARD_SLOT_TIMES, capacity: 5 },
+  { date: "2026-07-30", times: STANDARD_SLOT_TIMES, capacity: 1 },
+  { date: "2026-07-31", times: STANDARD_SLOT_TIMES, capacity: 5 },
 ];
 
 const availabilityMap = new Map(availability.map((entry) => [entry.date, entry]));
