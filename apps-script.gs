@@ -4,9 +4,7 @@
 // the "<date label> at <time>" timeSlot string. Must stay in sync with the
 // `capacity` field per date in the `availability` array in script.js.
 var DATE_CAPACITY = {
-  "Tuesday, July 28, 2026": 1,
-  "Thursday, July 30, 2026": 1,
-  "Friday, July 31, 2026": 5,
+  "Wednesday, August 5, 2026": 1,
   "Thursday, August 6, 2026": 5,
   "Friday, August 7, 2026": 4,
 };
