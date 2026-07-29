@@ -7,6 +7,8 @@ var DATE_CAPACITY = {
   "Tuesday, July 28, 2026": 1,
   "Thursday, July 30, 2026": 1,
   "Friday, July 31, 2026": 5,
+  "Thursday, August 6, 2026": 5,
+  "Friday, August 7, 2026": 4,
 };
 var DEFAULT_CAPACITY = 1;
 
@@ -154,6 +156,7 @@ function sendSelectedConfirmation() {
     "Hi " + name + ",\n\n" +
     "This confirms your interview is scheduled for " + timeSlot + " (Eastern Time).\n\n" +
     "Your interviewer is " + interviewerName + ". Join using this Zoom link:\n" + zoomLink + "\n\n" +
+    "IMPORTANT: Your camera must be ON for the duration of the interview.\n\n" +
     "See you then!";
 
   MailApp.sendEmail(email, subject, body);
