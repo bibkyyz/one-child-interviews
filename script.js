@@ -13,12 +13,18 @@ const STANDARD_SLOT_TIMES = [
 ];
 
 const availability = [
-  { date: "2026-08-05", times: ["9:00 AM - 9:20 AM", "9:20 AM - 9:40 AM", "9:40 AM - 10:00 AM"], capacity: 1 },
+  { date: "2026-08-05", times: ["9:00 AM - 9:20 AM", "9:20 AM - 9:40 AM", "9:40 AM - 10:00 AM", "1:00 PM - 1:20 PM", "1:20 PM - 1:40 PM", "1:40 PM - 2:00 PM"], capacity: 1 },
   { date: "2026-08-06", times: STANDARD_SLOT_TIMES, capacity: 5 },
   { date: "2026-08-07", times: STANDARD_SLOT_TIMES, capacity: 4 },
 ];
 
 const availabilityMap = new Map(availability.map((entry) => [entry.date, entry]));
+
+// Slots forced to display as already booked, with no real booking behind them.
+const FORCED_BOOKED_SLOTS = new Set([
+  "Wednesday, August 5, 2026 at 1:20 PM - 1:40 PM",
+  "Wednesday, August 5, 2026 at 1:40 PM - 2:00 PM",
+]);
 
 const form = document.getElementById("interview-form");
 const submitBtn = document.getElementById("submit-btn");
@@ -134,7 +140,7 @@ function renderTimeSlots(iso, dateObj) {
     btn.type = "button";
     btn.className = "picker-btn";
 
-    if (bookedCount >= capacity) {
+    if (bookedCount >= capacity || FORCED_BOOKED_SLOTS.has(slotLabel)) {
       btn.classList.add("booked");
       btn.disabled = true;
       btn.textContent = `${time} (Booked)`;
