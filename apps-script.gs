@@ -10,14 +10,31 @@ var DATE_CAPACITY = {
 };
 var DEFAULT_CAPACITY = 1;
 
+// Short-lived cache of the booked-slots list so rapid date-switching on the
+// frontend doesn't trigger a fresh sheet read on every click. doPost always
+// reads the sheet directly (never the cache) so double-booking prevention is
+// unaffected, and clears this cache on a successful booking so the next
+// doGet reflects it immediately instead of waiting out the full TTL.
+var BOOKED_SLOTS_CACHE_KEY = "bookedSlots";
+var BOOKED_SLOTS_CACHE_TTL_SECONDS = 20;
+
 function getCapacityForSlot(timeSlot) {
   var dateLabel = String(timeSlot).split(" at ")[0];
   return DATE_CAPACITY.hasOwnProperty(dateLabel) ? DATE_CAPACITY[dateLabel] : DEFAULT_CAPACITY;
 }
 
 function doGet(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
-  var bookedSlots = getBookedSlots(sheet);
+  var cache = CacheService.getScriptCache();
+  var cached = cache.get(BOOKED_SLOTS_CACHE_KEY);
+  var bookedSlots;
+
+  if (cached) {
+    bookedSlots = JSON.parse(cached);
+  } else {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+    bookedSlots = getBookedSlots(sheet);
+    cache.put(BOOKED_SLOTS_CACHE_KEY, JSON.stringify(bookedSlots), BOOKED_SLOTS_CACHE_TTL_SECONDS);
+  }
 
   return ContentService
     .createTextOutput(JSON.stringify({ bookedSlots: bookedSlots }))
@@ -61,6 +78,7 @@ function doPost(e) {
     ]);
 
     sortSheetByInterviewTime(sheet);
+    CacheService.getScriptCache().remove(BOOKED_SLOTS_CACHE_KEY);
 
     return ContentService
       .createTextOutput(JSON.stringify({ status: "success" }))

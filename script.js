@@ -122,6 +122,8 @@ async function selectDate(iso, dateObj) {
   selectedDateISO = iso;
   timeSlotInput.value = "";
   renderCalendar();
+  timeField.hidden = false;
+  timePicker.innerHTML = '<p class="muted-text">Checking availability...</p>';
   await loadBookedSlots();
   renderTimeSlots(iso, dateObj);
 }
