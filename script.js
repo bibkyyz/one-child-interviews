@@ -13,11 +13,17 @@ const STANDARD_SLOT_TIMES = [
 ];
 
 const availability = [
+  { date: "2026-08-05", times: ["9:00 AM - 9:20 AM", "9:20 AM - 9:40 AM", "9:40 AM - 10:00 AM", "1:00 PM - 1:20 PM", "1:20 PM - 1:40 PM", "1:40 PM - 2:00 PM"], capacity: 1 },
   { date: "2026-08-06", times: STANDARD_SLOT_TIMES, capacity: 5 },
   { date: "2026-08-07", times: STANDARD_SLOT_TIMES, capacity: 4 },
 ];
 
 const availabilityMap = new Map(availability.map((entry) => [entry.date, entry]));
+
+// Dates where every slot should always render as booked, regardless of
+// actual booking counts from the Sheet — used to freeze a date without
+// touching its existing bookings or removing it from `availability`.
+const FORCED_FULL_DATES = new Set(["2026-08-05"]);
 
 const form = document.getElementById("interview-form");
 const submitBtn = document.getElementById("submit-btn");
@@ -125,6 +131,7 @@ function renderTimeSlots(iso, dateObj) {
   const times = entry ? entry.times : [];
   const capacity = entry ? entry.capacity : 1;
   const dateLabel = formatDateLabel(dateObj);
+  const forcedFull = FORCED_FULL_DATES.has(iso);
   timePicker.innerHTML = "";
 
   times.forEach((time) => {
@@ -134,7 +141,7 @@ function renderTimeSlots(iso, dateObj) {
     btn.type = "button";
     btn.className = "picker-btn";
 
-    if (bookedCount >= capacity) {
+    if (forcedFull || bookedCount >= capacity) {
       btn.classList.add("booked");
       btn.disabled = true;
       btn.textContent = `${time} (Booked)`;
