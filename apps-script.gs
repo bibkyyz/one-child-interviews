@@ -4,9 +4,9 @@
 // the "<date label> at <time>" timeSlot string. Must stay in sync with the
 // `capacity` field per date in the `availability` array in script.js.
 var DATE_CAPACITY = {
-  "Wednesday, August 5, 2026": 1,
-  "Thursday, August 6, 2026": 5,
-  "Friday, August 7, 2026": 4,
+  "Thursday, August 13, 2026": 3,
+  "Friday, August 14, 2026": 5,
+  "Monday, August 17, 2026": 5,
 };
 var DEFAULT_CAPACITY = 1;
 
@@ -55,6 +55,15 @@ function doPost(e) {
     var data = JSON.parse(e.postData.contents);
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
 
+    if (hasDuplicateSubmission(sheet, data.name, data.phone, data.timeSlot)) {
+      return ContentService
+        .createTextOutput(JSON.stringify({
+          status: "error",
+          message: "You've already submitted for this time slot.",
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
     var existingCount = getBookedSlots(sheet).filter(function (slot) {
       return slot === data.timeSlot;
     }).length;
@@ -99,6 +108,26 @@ function getBookedSlots(sheet) {
   // Column D = Time Slot
   var values = sheet.getRange(2, 4, lastRow - 1, 1).getValues();
   return values.map(function (row) { return row[0]; }).filter(String);
+}
+
+// Rejects a resubmission from the same person (by Name + Phone) for the
+// same exact Time Slot. Name is compared case-insensitively; phone is
+// compared with formatting characters stripped, so "(555) 123-4567" and
+// "5551234567" are treated as the same number.
+function hasDuplicateSubmission(sheet, name, phone, timeSlot) {
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return false;
+
+  var normalizedName = String(name).trim().toLowerCase();
+  var normalizedPhone = String(phone).replace(/\D/g, "");
+
+  var rows = sheet.getRange(2, 1, lastRow - 1, 4).getValues(); // A:D = Name, Email, Phone, Time Slot
+  return rows.some(function (row) {
+    var rowName = String(row[0]).trim().toLowerCase();
+    var rowPhone = String(row[2]).replace(/\D/g, "");
+    var rowTimeSlot = row[3];
+    return rowName === normalizedName && rowPhone === normalizedPhone && rowTimeSlot === timeSlot;
+  });
 }
 
 // Sorts data rows (everything below the header) by interview date/time,
