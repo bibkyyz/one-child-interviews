@@ -7,6 +7,8 @@ var DATE_CAPACITY = {
   "Thursday, August 13, 2026": 3,
   "Friday, August 14, 2026": 5,
   "Monday, August 17, 2026": 5,
+  "Thursday, August 20, 2026": 4,
+  "Friday, August 21, 2026": 4,
 };
 var DEFAULT_CAPACITY = 1;
 
