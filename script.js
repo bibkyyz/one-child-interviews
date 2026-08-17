@@ -13,9 +13,6 @@ const STANDARD_SLOT_TIMES = [
 ];
 
 const availability = [
-  { date: "2026-08-13", times: STANDARD_SLOT_TIMES, capacity: 3 },
-  { date: "2026-08-14", times: STANDARD_SLOT_TIMES, capacity: 5 },
-  { date: "2026-08-17", times: STANDARD_SLOT_TIMES, capacity: 5 },
   { date: "2026-08-20", times: STANDARD_SLOT_TIMES, capacity: 4 },
   { date: "2026-08-21", times: STANDARD_SLOT_TIMES, capacity: 4 },
 ];
