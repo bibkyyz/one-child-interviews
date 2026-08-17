@@ -226,6 +226,38 @@ function syncRecruitmentApplicants() {
   Logger.log("Recruitment_applicants sync: added " + addedCount + ", updated " + updatedCount + ".");
 }
 
+// One-time setup: adds dropdown data validation to the main sheet's column F
+// (Interview Status), covering rows 2-1000 so newly added rows are
+// automatically covered without re-running this. Options mirror what was
+// already configured manually on this column, plus "Interview Scheduled"
+// (previously missing here, though already present in the
+// Recruitment_applicants "Stage" dropdown below) so that value is valid on
+// both tabs.
+function setupMainSheetInterviewStatusDropdown() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var mainSheet = ss.getSheets()[0];
+
+  var STATUS_OPTIONS = [
+    "Interview Scheduled",
+    "Interviewed - Pending",
+    "Interviewed - Accepted",
+    "Interviewed - Rejected",
+    "NO SHOW",
+    "TBD - RESCHEDULED",
+  ];
+
+  var ROW_START = 2;
+  var ROW_COUNT = 999; // rows 2 through 1000
+
+  var statusRule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(STATUS_OPTIONS, true)
+    .setAllowInvalid(false)
+    .build();
+  mainSheet.getRange(ROW_START, 6, ROW_COUNT, 1).setDataValidation(statusRule);
+
+  Logger.log("Dropdown validation applied to main sheet column F (Interview Status), rows 2-1000.");
+}
+
 // One-time setup: adds dropdown data validation to Recruitment_applicants
 // columns C (French Speaking), D (Phase), E (Interviewer), and G (Stage),
 // covering rows 2-1000 in a single rule per column so newly added rows
