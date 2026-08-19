@@ -15,9 +15,14 @@ const STANDARD_SLOT_TIMES = [
 const availability = [
   { date: "2026-08-20", times: STANDARD_SLOT_TIMES, capacity: 4 },
   { date: "2026-08-21", times: STANDARD_SLOT_TIMES, capacity: 4 },
+  { date: "2026-08-24", times: STANDARD_SLOT_TIMES, capacity: 8 },
+  { date: "2026-08-25", times: STANDARD_SLOT_TIMES, capacity: 8 },
 ];
 
-const availabilityMap = new Map(availability.map((entry) => [entry.date, entry]));
+const todayISO = toISODate(new Date());
+const futureAvailability = availability.filter((entry) => entry.date >= todayISO);
+
+const availabilityMap = new Map(futureAvailability.map((entry) => [entry.date, entry]));
 
 const form = document.getElementById("interview-form");
 const submitBtn = document.getElementById("submit-btn");
@@ -36,7 +41,7 @@ const timeSlotInput = document.getElementById("timeSlot");
 
 let bookedCounts = new Map();
 let selectedDateISO = null;
-let currentMonth = parseISODate(availability[0].date);
+let currentMonth = parseISODate(futureAvailability[0] ? futureAvailability[0].date : todayISO);
 currentMonth.setDate(1);
 
 function parseISODate(iso) {
@@ -56,7 +61,7 @@ function formatDateLabel(date) {
 }
 
 function hasAvailabilityInMonth(year, month, comparator) {
-  return availability.some((entry) => {
+  return futureAvailability.some((entry) => {
     const d = parseISODate(entry.date);
     return comparator(d.getFullYear(), d.getMonth(), year, month);
   });
